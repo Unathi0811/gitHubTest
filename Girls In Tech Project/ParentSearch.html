@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Parent Search</title>
+        <link rel="stylesheet" type="text/css" href="stylesheet.css">
+        <link rel="icon" type="image/png" href="/nannyIcon.png">
+        <style>
+            html{
+                height: 100%;
+            }
+            
+            body{
+                height: 100%;
+                margin: 0;
+                font-family: Arial, Helvetica, sans-serif;
+                display: grid;
+                justify-items: center;
+                align-items: center;
+                background-image: url(/pexels-kasuma-908644.jpg);
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center; 
+                min-height: 100vh;
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 1em;
+            }
+
+            label {
+                margin-bottom: 0.5em;
+            }
+
+            input {
+                margin-bottom: 1em;
+            }
+
+            button {
+                cursor: pointer;
+                background-color: #007BFF;
+                color: white;
+                padding: 0.5em 1em;
+                border: none;
+                border-radius: 5px;
+            }
+
+            button:hover {
+                background-color: #0056B3;
+            }
+
+            #nanny-results {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                grid-gap: 1em;
+            }
+
+            .nanny-card {
+                background-color: #F8F9FA;
+                padding: 1em;
+                border-radius: 5px;
+            }
+
+            .nanny-card h2 {
+                margin-bottom: 0.5em;
+            }
+
+            .nanny-card p {
+                margin-bottom: 1em;
+            }
+
+
+            #mainHolder{
+                width: 20%;
+                margin-top: 10%;
+                height: 10%;
+                display: grid;
+                justify-items: center;
+                align-items: center;
+                background-color: blur;
+                border-radius: 7px;
+                box-shadow: 0px 0px 5px 2px black;
+                margin-bottom: 10%;
+                margin-left: 523px;
+            }
+
+            header{
+                width: 100%;
+                height: 120px; 
+                position: absolute;
+                top: 0;
+                left: 0;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;   
+                justify-content: center;
+                justify-items: center;
+                align-items: center;
+                background: transparent;
+                backdrop-filter: blur(10px);
+                background-color: transparent;
+                border-radius: 0; 
+                box-shadow: 0px 0px 5px 2px black;
+            }
+
+            footer{
+                width: 100%;
+                height: 120px; 
+                top: 0;
+                left: 0;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;   
+                justify-content: center;
+                justify-items: center;
+                align-items: center;
+                background: transparent;
+                backdrop-filter: blur(10px);
+                background-color: transparent;
+                border-radius: 0; 
+                box-shadow: 0px 0px 5px 2px black;
+            }
+
+        </style>
+    </head>
+    <body>
+        <header>
+            Parent Search
+        </header>
+        <main id="mainHolder">
+            <h1>Find a Nanny</h1>
+            <form id="parent-search-form">
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+                <label for="zipcode">Zip Code:</label>
+                <input type="text" id="zipcode" name="zipcode" required>
+                <button type="submit">Search</button>
+            </form>
+            <div id="nanny-results"></div>
+        </main>
+        <footer id="footer">
+            <p>Copyright &copy; 2023, Nanny Co. All Rights Reserved</p>
+        </footer>
+        <script href="/script.js">
+            document.getElementById('parent-search-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const city = document.getElementById('city').value;
+                const zipcode = document.getElementById('zipcode').value;
+
+                fetch(`https://api.zippopotam.us/za/${zipcode}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const cityName = data['places'][0]['place name'];
+                        const latitude = data['places'][0]['longitude'];
+                        const longitude = data['places'][0]['latitude'];
+
+                        fetch(`https://api.onepeloton.com/v2/users?location=${latitude}%2C${longitude}&query=${cityName}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const nannyResults = document.getElementById('nanny-results');
+                                nannyResults.innerHTML = '';
+
+                                data['users'].forEach(nanny => {
+                                    const nannyCard = document.createElement('div');
+                                    nannyCard.className = 'nanny-card';
+                                    nannyCard.innerHTML = `
+                                        <h2>${nanny['first_name']} ${nanny['last_name']}</h2>
+                                        <p>City: ${cityName}</p>
+                                        <p>Zip Code: ${zipcode}</p>
+                                    `;
+                                    nannyResults.appendChild(nannyCard);
+                                });
+                            });
+                    });
+            });
+        </script>
+    </body>
+</html>
+
+<!--
+The parent search page uses an HTML form to input their city and zip code. When the form is submitted, the JavaScript file listens for the submit event. The event listener function first prevents the form from refreshing the page using the event.preventDefault() method. Then, it fetches the city name and coordinates using the Zippopotam API. The city name and coordinates are then used to fetch nanny data from the Onepeloton API. Finally, the nanny results are displayed in a grid format on the page.
+
+Here is a breakdown of the JavaScript code:
+
+document.getElementById('parent-search-form').addEventListener('submit', function(event) { ... }): This line adds an event listener to the parent search form. When the form is submitted, the event listener function is executed.
+
+event.preventDefault();: This line prevents the form from refreshing the page when it is submitted.
+
+const city = document.getElementById('city').value;: This line fetches the city value from the form input.
+
+const zipcode = document.getElementById('zipcode').value;: This line fetches the zip code value from the form input.
+
+fetch(https://api.zippopotam.us/za/${zipcode}`) ...`: This fetch request fetches the city name and coordinates using the Zippopotam API. The coordinates are used in the next fetch request.
+
+fetch(https://api.onepeloton.com/v2/users?location=${latitude}%2C${longitude}&query=${cityName}`) ...`: This fetch request fetches nanny data using the Onepeloton API. The city name and coordinates are used as parameters in the request URL.
+
+const nannyResults = document.getElementById('nanny-results');: This line fetches the div element where the nanny results will be displayed.
+
+nannyResults.innerHTML = '';: This line clears the previous nanny results from the div element.
+
+data['users'].forEach(nanny => { ... }): This forEach loop iterates over each nanny in the fetched data. For each nanny, it creates a new div element and populates it with the nanny's name, city, and zip code. Then, it appends the nanny card to the nanny results div element.
+
+This is how the parent search page is supposed to work. When the user inputs their city and zip code and clicks the search button, the script will fetch nanny data based on the input city and coordinates, and then display the nanny results in a grid format on the page.
+-->

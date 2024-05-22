@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Selection</title>
+    <link rel="stylesheet" href="chooseService.css">
+</head>
+<body>
+    <header>
+        <h1>Service Selection</h1>
+    </header>
+
+    <main>
+        <h2>What kind of care do you need?</h2>
+        <form id="serviceForm" action="chooseService.php" method="post">
+            <div id="serviceContainer">
+                <div class="service" data-service="Housekeeping">Housekeeping</div>
+                <div class="service" data-service="Pet Care">Pet Care</div>
+                <div class="service" data-service="Senior Care">Senior Care</div>
+                <div class="service" data-service="Cooking">Cooking</div>
+                <div class="service" data-service="Tutoring">Tutoring</div>
+            </div>
+            <input type="hidden" id="selectedService" name="service_name" value="">
+            <button type="submit" id="nextButton">Next</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Service Selection</p>
+    </footer>
+
+    <script src="chooseService.js"></script>
+</body>
+</html>
